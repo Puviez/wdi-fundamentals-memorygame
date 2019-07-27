@@ -2,27 +2,32 @@ var cards = [
 {
 	rank: "Queen",
 	suit: "Hearts",
-	cardImage: "images/queen-of-hearts.png"
+	cardImage: "images/queen_of_hearts2.png"
 },
 {
 	rank: "Queen",
 	suit: "Diamonds",
-	cardImage: "images/queen-of-diamonds.png"
+	cardImage: "images/queen_of_diamonds2.png"
 },
 {
 	rank: "King",
 	suit: "Hearts",
-	cardImage: "images/king-of-hearts.png"
+	cardImage: "images/king_of_hearts2.png"
 },
 {
 	rank: "King",
 	suit: "Diamonds",
-	cardImage: "images/king-of-diamonds.png"
+	cardImage: "images/king_of_diamonds2.png"
 }
 ];
 
 var cardsInPlay = [];
 var points = 0;
+var difficulty = 1;
+
+function setDifficulty(lvl) {
+	difficulty = lvl;
+}
 
 function unflip(flippedCards) {
 	setTimeout(function() {
@@ -44,7 +49,9 @@ function checkForMatch() {
 			if (clickedCards.length === cards.length) {
 				console.log("CONGRATS, YOU WIN!");
 				console.log(`You scored ${points} Points!`);
-				pointss = 0;
+				// RESET FUNCTION
+				points = 0;
+				document.querySelector('#score').innerHTML = "Score: " + points;
 				unflip(clickedCards);
 			}
 		} else {
@@ -80,7 +87,92 @@ function createBoard() {
 		cardElement.setAttribute('data-id',i);
 		cardElement.addEventListener('click', flipCard);
 		document.querySelector('#gameboard').appendChild(cardElement);
+	document.querySelector('#back').style.display = 'block';
+	backToHome();
 	}
 }
 
-createBoard();
+function hideBoard() {
+	var board = document.querySelector('#gameboard');
+	while (board.hasChildNodes()) {
+		board.removeChild(board.firstChild);
+	}
+}
+
+function hideMenu() {
+	var menu = document.querySelectorAll('.menuoption');
+	for (var i = 0; i < menu.length; i++) {
+		menu[i].style.display = 'none';
+	}
+}
+
+function showMenu() {
+	var menu = document.querySelectorAll('.menuoption');
+	for (var i = 0; i < menu.length; i++) {
+		menu[i].style.display = 'inline-block';
+	}
+}
+
+function newGame(){
+	var beginGame = document.querySelector('#startgame')
+	beginGame.addEventListener('click', createBoard);
+	beginGame.addEventListener('click', hideMenu);
+}
+
+function showOpt() {
+	var difoptmenu = document.querySelectorAll('.difoption');
+	for (var i = 0; i < difoptmenu.length; i++) {
+		difoptmenu[i].style.display = 'block';
+	}
+	optControl();
+}
+
+function hideOpt() {
+	var difoptmenu = document.querySelectorAll('.difoption');
+	for (var i = 0; i < difoptmenu.length; i++) {
+		difoptmenu[i].style.display = 'none';
+	}
+}
+
+function backToHome() {
+	var goback = document.querySelector('#back');
+	goback.addEventListener('click', showMenu);
+	goback.addEventListener('click', hideOpt);
+	goback.addEventListener('click', hideBoard);
+}
+
+function optControl() {
+	document.querySelector('#easy').addEventListener('click', function() {
+		setDifficulty(1);
+	});
+	document.querySelector('#medium').addEventListener('click', function() {
+		setDifficulty(2);
+	});
+	document.querySelector('#hard').addEventListener('click', function() {
+		setDifficulty(3);
+	});
+	backToHome();
+}
+
+function difSelect() {
+	var difficultyOption = document.querySelector('#options');
+	difficultyOption.addEventListener('click', hideMenu);
+	difficultyOption.addEventListener('click', showOpt);
+}
+
+function credSelect() {
+	var creds = document.querySelector('#credits');
+	creds.addEventListener('click', hideMenu);
+	creds.addEventListener('click', function() {
+		document.querySelector('#back').style.display = 'block';
+		backToHome();
+	});
+}
+
+function playGame() {
+	newGame();
+	difSelect();
+	credSelect();
+}
+
+playGame();
