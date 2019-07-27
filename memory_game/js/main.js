@@ -1,5 +1,15 @@
 var cards = [
 {
+	rank: "Jack",
+	suit: "Hearts",
+	cardImage: "images/jack_of_hearts2.png"
+},
+{
+	rank: "Jack",
+	suit: "Diamonds",
+	cardImage: "images/jack_of_diamonds2.png"
+},
+{
 	rank: "Queen",
 	suit: "Hearts",
 	cardImage: "images/queen_of_hearts2.png"
@@ -18,10 +28,31 @@ var cards = [
 	rank: "King",
 	suit: "Diamonds",
 	cardImage: "images/king_of_diamonds2.png"
+},
+{
+	rank: "Ace",
+	suit: "Hearts",
+	cardImage: "images/ace_of_hearts.png"
+},
+{
+	rank: "Ace",
+	suit: "Diamonds",
+	cardImage: "images/ace_of_diamonds.png"
+},
+{
+	rank: "Joker",
+	suit: "Red",
+	cardImage: "images/red_joker.png"
+},
+{
+	rank: "Joker",
+	suit: "Red",
+	cardImage: "images/red_joker.png"
 }
 ];
 
 var cardsInPlay = [];
+var usedCards = []
 var points = 0;
 var difficulty = 1;
 
@@ -46,7 +77,7 @@ function checkForMatch() {
 			cardsInPlay.pop();
 			points += 50;
 			document.querySelector('#score').innerHTML = "Score: " + points;
-			if (clickedCards.length === cards.length) {
+			if (clickedCards.length === usedCards.length) {
 				console.log("CONGRATS, YOU WIN!");
 				console.log(`You scored ${points} Points!`);
 				// RESET FUNCTION
@@ -69,9 +100,9 @@ function flipCard() {
 		console.log("Please select a different card to flip!");
 	} else {
 		var cardId = this.getAttribute('data-id');
-		console.log(`User flipped ${cards[cardId].rank}`);
-		cardsInPlay.push(cards[cardId].rank);
-		this.setAttribute('src',cards[cardId].cardImage);
+		console.log(`User flipped ${usedCards[cardId].rank}`);
+		cardsInPlay.push(usedCards[cardId].rank);
+		this.setAttribute('src',usedCards[cardId].cardImage);
 		this.setAttribute('class','clicked');
 		if (cardsInPlay.length === 2) {
 			checkForMatch();
@@ -81,7 +112,14 @@ function flipCard() {
 }
 
 function createBoard() {
-	for (var i = 0; i < cards.length; i ++) {
+	if (difficulty === 1) {
+		usedCards = cards.slice(0,4);
+	} else if(difficulty === 2) {
+		usedCards = cards.slice(0,8);
+	} else {
+		usedCards = cards;
+	}
+	for (var i = 0; i < usedCards.length; i ++) {
 		var cardElement = document.createElement('img');
 		cardElement.setAttribute('src', "images/back.png");
 		cardElement.setAttribute('data-id',i);
@@ -89,6 +127,7 @@ function createBoard() {
 		document.querySelector('#gameboard').appendChild(cardElement);
 	document.querySelector('#back').style.display = 'block';
 	backToHome();
+	document.querySelector('#score').style.display = 'block';
 	}
 }
 
@@ -139,6 +178,9 @@ function backToHome() {
 	goback.addEventListener('click', showMenu);
 	goback.addEventListener('click', hideOpt);
 	goback.addEventListener('click', hideBoard);
+	goback.addEventListener('click', function() {
+		document.querySelector('#score').style.display = 'none';
+	});
 }
 
 function optControl() {
