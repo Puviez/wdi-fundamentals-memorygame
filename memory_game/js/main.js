@@ -1,3 +1,7 @@
+// ----- Variables ------
+
+// Cards Array
+// - Contains all cards that can be played
 var cards = [
 {
 	rank: "Jack",
@@ -51,15 +55,28 @@ var cards = [
 }
 ];
 
-var cardsInPlay = [];
+// Subset of Cards
+// Contains a number of cards (determined by difficulty) that will be used for each instance of the game
 var usedCards = []
+
+// Cards that have been flipped
+var cardsInPlay = [];
+
+// Number of Points the player has earned this round
 var points = 0;
+
+// The difficulty level selected by the player
 var difficulty = 1;
 
+// ----- Functions -----
+
+// Change the difficulty (number of cards)
 function setDifficulty(lvl) {
 	difficulty = lvl;
 }
 
+// Unflip all face-up cards 
+// Used during the reset process
 function unflip(flippedCards) {
 	setTimeout(function() {
 		for (let i = 0; i < flippedCards.length; i ++) {
@@ -69,8 +86,10 @@ function unflip(flippedCards) {
 	},1500);
 }
 
+// Checks whether the two cards that have bene flipped are a match
 function checkForMatch() {
 	var clickedCards = document.querySelectorAll('.clicked');
+	var resetButton = document.querySelector('#reset');
 	if (cardsInPlay[0] === cardsInPlay[1]) {
 			console.log("You found a match!");
 			cardsInPlay.pop();
@@ -80,10 +99,13 @@ function checkForMatch() {
 			if (clickedCards.length === usedCards.length) {
 				console.log("CONGRATS, YOU WIN!");
 				console.log(`You scored ${points} Points!`);
-				// RESET FUNCTION
-				points = 0;
-				document.querySelector('#score').innerHTML = "Score: " + points;
-				unflip(clickedCards);
+				resetButton.style.display = 'block';
+				resetButton.addEventListener('click',function() {
+					reset(clickedCards);
+				});
+				resetButton.addEventListener('click',function() {
+					resetButton.style.display = 'none';
+				});
 			}
 		} else {
 			console.log("Sorry try again.");
@@ -95,6 +117,7 @@ function checkForMatch() {
 		}
 }
 
+// Flips the card clicked by the user
 function flipCard() {
 	if (this.getAttribute('class') === 'clicked') {
 		console.log("Please select a different card to flip!");
@@ -111,6 +134,7 @@ function flipCard() {
 	
 }
 
+// Creates the game board layout, with varying number of cards depending on difficulty
 function createBoard() {
 	if (difficulty === 1) {
 		usedCards = cards.slice(0,4);
@@ -131,6 +155,7 @@ function createBoard() {
 	}
 }
 
+// Removes the game board from the display
 function hideBoard() {
 	var board = document.querySelector('#gameboard');
 	while (board.hasChildNodes()) {
@@ -138,6 +163,7 @@ function hideBoard() {
 	}
 }
 
+// Hides the main menu
 function hideMenu() {
 	var menu = document.querySelectorAll('.menuoption');
 	for (var i = 0; i < menu.length; i++) {
@@ -145,6 +171,8 @@ function hideMenu() {
 	}
 }
 
+
+// Displays the main menu
 function showMenu() {
 	var menu = document.querySelectorAll('.menuoption');
 	for (var i = 0; i < menu.length; i++) {
@@ -152,12 +180,14 @@ function showMenu() {
 	}
 }
 
+// Starts a new game
 function newGame(){
 	var beginGame = document.querySelector('#startgame')
 	beginGame.addEventListener('click', createBoard);
 	beginGame.addEventListener('click', hideMenu);
 }
 
+// Builds a sub-option menu
 function showOpt() {
 	var difoptmenu = document.querySelectorAll('.difoption');
 	for (var i = 0; i < difoptmenu.length; i++) {
@@ -166,6 +196,7 @@ function showOpt() {
 	optControl();
 }
 
+// Hides sub-option menu
 function hideOpt() {
 	var difoptmenu = document.querySelectorAll('.difoption');
 	for (var i = 0; i < difoptmenu.length; i++) {
@@ -173,6 +204,8 @@ function hideOpt() {
 	}
 }
 
+
+// Returns the user to the main options page
 function backToHome() {
 	var goback = document.querySelector('#back');
 	goback.addEventListener('click', showMenu);
@@ -183,6 +216,7 @@ function backToHome() {
 	});
 }
 
+// Allows the user to select the game difficulty
 function optControl() {
 	document.querySelector('#easy').addEventListener('click', function() {
 		setDifficulty(1);
@@ -196,12 +230,14 @@ function optControl() {
 	backToHome();
 }
 
+// Functionality for difficulty option
 function difSelect() {
 	var difficultyOption = document.querySelector('#options');
 	difficultyOption.addEventListener('click', hideMenu);
 	difficultyOption.addEventListener('click', showOpt);
 }
 
+// Functionality for credits option
 function credSelect() {
 	var creds = document.querySelector('#credits');
 	creds.addEventListener('click', hideMenu);
@@ -211,10 +247,24 @@ function credSelect() {
 	});
 }
 
+// Runs the Game
 function playGame() {
 	newGame();
 	difSelect();
 	credSelect();
 }
+
+// Resets the Game
+function reset(cardsToUnflip) {
+	var checkReset = document.querySelectorAll('.clicked');
+	if (checkReset.length === usedCards.length) {
+		points = 0;
+		document.querySelector('#score').innerHTML = "Score: " + points;
+		unflip(cardsToUnflip);
+
+	}
+}
+
+// ------ Gameplay -----
 
 playGame();
