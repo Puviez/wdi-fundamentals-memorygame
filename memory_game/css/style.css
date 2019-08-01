@@ -62,6 +62,7 @@ main {
 
 img {
 	margin: 40px 8px;
+	max-width: 100%;
 }
 
 footer {
@@ -137,8 +138,14 @@ font-size: 0;
 }
 
 .difoption:hover {
-	background: #F15B31;
+	background: #F15B31 !important;
   	border-color: #F15B31;
   	color: white;
   	transform: scale(1.02);
+}
+
+#gameboard {
+	flex-direction: column;
+	height: auto;
+	width: auto;
 }

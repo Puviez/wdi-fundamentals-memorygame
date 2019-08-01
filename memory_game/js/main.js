@@ -52,6 +52,15 @@ var cards = [
 	rank: "Joker",
 	suit: "Red",
 	cardImage: "images/red_joker.png"
+},
+{
+	rank: "Two",
+	suit: "Hearts",
+	cardImage: "images/2_of_hearts.png"
+},{
+	rank: "Two",
+	suit: "Diamonds",
+	cardImage: "images/2_of_diamonds.png"
 }
 ];
 
@@ -68,11 +77,27 @@ var points = 0;
 // The difficulty level selected by the player
 var difficulty = 1;
 
+// Lockboard
+var lockboard = false;
 // ----- Functions -----
 
 // Change the difficulty (number of cards)
 function setDifficulty(lvl) {
 	difficulty = lvl;
+}
+
+// Randomise cards
+function randomise(arr) {
+	var tempArr = []
+	var len = arr.length
+	while (len > 0) {
+		var index = Math.floor(Math.random() * len);
+		len --;
+		tempArr = arr[len];
+		arr[len] = arr[index];
+		arr[index] = tempArr;
+	}
+	return arr;
 }
 
 // Unflip all face-up cards 
@@ -90,23 +115,31 @@ function unflip(flippedCards) {
 function checkForMatch() {
 	var clickedCards = document.querySelectorAll('.clicked');
 	var resetButton = document.querySelector('#reset');
+	var corrector = [];
+
 	if (cardsInPlay[0] === cardsInPlay[1]) {
 			console.log("You found a match!");
 			cardsInPlay.pop();
 			cardsInPlay.pop();
 			points += 50;
+			// Sets class of correctly paired cards to "correct"
+			for (var i = 0; i < clickedCards.length; i ++) {
+				corrector.push(clickedCards[i]);
+				for (var j = 0; j < corrector.length; j ++) {
+					corrector[j].setAttribute('class','correct');
+				}
+			}
+			//
 			document.querySelector('#score').innerHTML = "Score: " + points;
-			if (clickedCards.length === usedCards.length) {
+			if (document.querySelectorAll('.correct').length === usedCards.length) {
 				console.log("CONGRATS, YOU WIN!");
 				console.log(`You scored ${points} Points!`);
 				resetButton.style.display = 'block';
-				resetButton.addEventListener('click',function() {
-					reset(clickedCards);
-				});
+				resetButton.addEventListener('click', reset);
 				resetButton.addEventListener('click',function() {
 					resetButton.style.display = 'none';
 				});
-			}
+			} 
 		} else {
 			console.log("Sorry try again.");
 			cardsInPlay.pop();
@@ -119,7 +152,7 @@ function checkForMatch() {
 
 // Flips the card clicked by the user
 function flipCard() {
-	if (this.getAttribute('class') === 'clicked') {
+	if (this.getAttribute('class') === 'clicked' || this.getAttribute('class') === 'correct') {
 		console.log("Please select a different card to flip!");
 	} else {
 		var cardId = this.getAttribute('data-id');
@@ -138,10 +171,13 @@ function flipCard() {
 function createBoard() {
 	if (difficulty === 1) {
 		usedCards = cards.slice(0,4);
+		randomise(usedCards);
 	} else if(difficulty === 2) {
 		usedCards = cards.slice(0,8);
+		randomise(usedCards);
 	} else {
 		usedCards = cards;
+		randomise(usedCards);
 	}
 	for (var i = 0; i < usedCards.length; i ++) {
 		var cardElement = document.createElement('img');
@@ -190,7 +226,7 @@ function newGame(){
 // Builds a sub-option menu
 function showOpt() {
 	var difoptmenu = document.querySelectorAll('.difoption');
-	for (var i = 0; i < difoptmenu.length; i++) {
+	for (var i = 0; i < difoptmenu.length - 1; i++) { // -1 to exlude the reset button
 		difoptmenu[i].style.display = 'block';
 	}
 	optControl();
@@ -212,20 +248,34 @@ function backToHome() {
 	goback.addEventListener('click', hideOpt);
 	goback.addEventListener('click', hideBoard);
 	goback.addEventListener('click', function() {
+		document.querySelector('#score').innerHTML = "Score: " + points;
 		document.querySelector('#score').style.display = 'none';
 	});
 }
 
 // Allows the user to select the game difficulty
 function optControl() {
-	document.querySelector('#easy').addEventListener('click', function() {
+	var ez = document.querySelector('#easy');
+	var med = document.querySelector('#medium');
+	var tough = document.querySelector('#hard');
+
+	ez.addEventListener('click', function() {
 		setDifficulty(1);
+		this.style.backgroundColor = '#0D2C40';
+		med.style.backgroundColor = '#00A6B3';
+		tough.style.backgroundColor = '#00A6B3';
 	});
-	document.querySelector('#medium').addEventListener('click', function() {
+	med.addEventListener('click', function() {
 		setDifficulty(2);
+		this.style.backgroundColor = '#0D2C40';
+		ez.style.backgroundColor = '#00A6B3';
+		tough.style.backgroundColor = '#00A6B3';
 	});
-	document.querySelector('#hard').addEventListener('click', function() {
+	tough.addEventListener('click', function() {
 		setDifficulty(3);
+		this.style.backgroundColor = '#0D2C40';
+		med.style.backgroundColor = '#00A6B3';
+		ez.style.backgroundColor = '#00A6B3';
 	});
 	backToHome();
 }
@@ -255,15 +305,22 @@ function playGame() {
 }
 
 // Resets the Game
-function reset(cardsToUnflip) {
-	var checkReset = document.querySelectorAll('.clicked');
+function reset() {
+	var checkReset = document.querySelectorAll('.correct');
 	if (checkReset.length === usedCards.length) {
 		points = 0;
 		document.querySelector('#score').innerHTML = "Score: " + points;
-		unflip(cardsToUnflip);
-
+		hideBoard();
+		createBoard();
 	}
 }
+
+// Congrats
+function congrats() {
+	var grats = document.createElement('div');
+
+}
+
 
 // ------ Gameplay -----
 
