@@ -77,8 +77,6 @@ var points = 0;
 // The difficulty level selected by the player
 var difficulty = 1;
 
-// Lockboard
-var lockboard = false;
 // ----- Functions -----
 
 // Change the difficulty (number of cards)
@@ -108,7 +106,7 @@ function unflip(flippedCards) {
 			flippedCards[i].setAttribute('src',"images/back.png");
 			flippedCards[i].removeAttribute('class');
 		}
-	},1500);
+	},750);
 }
 
 // Checks whether the two cards that have bene flipped are a match
@@ -132,8 +130,9 @@ function checkForMatch() {
 			//
 			document.querySelector('#score').innerHTML = "Score: " + points;
 			if (document.querySelectorAll('.correct').length === usedCards.length) {
-				console.log("CONGRATS, YOU WIN!");
-				console.log(`You scored ${points} Points!`);
+				setTimeout(function() {
+					alert(`CONGRATS, YOU WIN! You scored ${points} Points!`);
+				}, 500);
 				resetButton.style.display = 'block';
 				resetButton.addEventListener('click', reset);
 				resetButton.addEventListener('click',function() {
@@ -188,6 +187,7 @@ function createBoard() {
 	document.querySelector('#back').style.display = 'block';
 	backToHome();
 	document.querySelector('#score').style.display = 'block';
+	document.querySelector('#score').innerHTML = "Score: " + points;
 	}
 }
 
@@ -315,11 +315,6 @@ function reset() {
 	}
 }
 
-// Congrats
-function congrats() {
-	var grats = document.createElement('div');
-
-}
 
 
 // ------ Gameplay -----

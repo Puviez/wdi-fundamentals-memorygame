@@ -149,3 +149,14 @@ font-size: 0;
 	height: auto;
 	width: auto;
 }
+
+#score {
+	font-family: "Raleway";
+	font-size: 20px;
+	font-weight: 800;
+	color: #0D2C40;
+	letter-spacing: .06em;
+	padding: 10px;
+	border: 10px solid transparent;
+
+}
